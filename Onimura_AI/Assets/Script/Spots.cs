@@ -5,6 +5,7 @@ using UnityEngine;
 public class Spots : MonoBehaviour
 {
     public int x, y;
+    public Pions currpion;
     public GameObject board;
 
     // Start is called before the first frame update
