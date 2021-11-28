@@ -8,12 +8,17 @@ public class Board : MonoBehaviour
     public GameObject[] kartoes;
     bool isAIturn;
     Spots[,] objarr; //x,y
+    Pions[,] allpion; //0 = player, 1 = ai
+
     Spots chosenpapan;
+    Card chosencard;
 
     // Start is called before the first frame update
     void Start()
     {
         isAIturn = false;
+        chosenpapan = null;
+        chosencard = null;
 
         setkartupos();
 
@@ -29,11 +34,30 @@ public class Board : MonoBehaviour
             objarr[tempx, tempy].x = tempx;
             objarr[tempx, tempy].y = tempy;
         }
-        settingkartu();
+        initializekartu();
+
+        allpion = new Pions[2, 5];
+        for (int i = 0; i < 5; i++)
+        {
+            if (i != 2)
+            {
+                allpion[0, i] = new Pions(false,false,i,0);
+                objarr[allpion[0, i].xpos, allpion[0, i].ypos].setpion(allpion[0, i]);
+                allpion[1, i] = new Pions(false, true, i, 4);
+                objarr[allpion[1, i].xpos, allpion[1, i].ypos].setpion(allpion[1, i]);
+            }
+            else
+            {
+                allpion[0, i] = new Pions(true, false, i, 0);
+                objarr[allpion[0, i].xpos, allpion[0, i].ypos].setpion(allpion[0, i]);
+                allpion[1, i] = new Pions(true, true, i, 4);
+                objarr[allpion[1, i].xpos, allpion[1, i].ypos].setpion(allpion[1, i]);
+            }
+        }
 
     }
 
-    void settingkartu()
+    void initializekartu()
     {
         ArrayList indexes = new ArrayList();
         int r; bool ada;
@@ -65,10 +89,11 @@ public class Board : MonoBehaviour
         int i = -1;
         for (int j = 0; j < 5; j++)
         {
-            if (kartoes[j].GetComponent<Card>() == c)
+            if (kartoes[j].GetComponent<Card>() == c && j < 2)
             {
                 i = j;
-                Debug.Log(i);
+                chosencard = c;
+                Debug.Log("Pilih kartu ke-" + (i+1));
                 break;
             }
         }
@@ -76,6 +101,12 @@ public class Board : MonoBehaviour
         kartoes[i] = kartoes[4]; // kartu rotation
         kartoes[4] = tempcard;
         setkartupos();
+    }
+
+    public void choosepion(int x, int y)
+    {
+        chosenpapan = objarr[x, y];
+        Debug.Log("dipilih papan di " + x + "," + y);
     }
 
     void setkartupos()
