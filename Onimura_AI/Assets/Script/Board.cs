@@ -57,6 +57,17 @@ public class Board : MonoBehaviour
 
     }
 
+   void refreshpion()
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < 5; j++)
+            {
+                objarr[j, i].GetComponent<SpriteRenderer>().color = Color.gray;
+            }
+        }
+    }
+
     void initializekartu()
     {
         ArrayList indexes = new ArrayList();
@@ -97,10 +108,13 @@ public class Board : MonoBehaviour
                 break;
             }
         }
-        GameObject tempcard = kartoes[i];
-        kartoes[i] = kartoes[4]; // kartu rotation
-        kartoes[4] = tempcard;
-        setkartupos();
+        if (i >= 0)
+        {
+            GameObject tempcard = kartoes[i];
+            kartoes[i] = kartoes[4]; // kartu rotation
+            kartoes[4] = tempcard;
+            setkartupos();
+        }
     }
 
     public void choosepion(int x, int y)
