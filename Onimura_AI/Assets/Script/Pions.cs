@@ -15,4 +15,10 @@ public class Pions
         this.xpos = xpos;
         this.ypos = ypos;
     }
+
+    public void setnewpos(int x,int y)
+    {
+        this.xpos = x;
+        this.ypos = y;
+    }
 }

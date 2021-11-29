@@ -9,7 +9,7 @@ public class Spots : MonoBehaviour
     public Pions pion = null;
     public GameObject board;
 
-    public void setpion(Pions p)
+    public void setpion(ref Pions p)
     {
         if (p.isKing)
         {
@@ -28,6 +28,8 @@ public class Spots : MonoBehaviour
             currpionobj.GetComponent<SpriteRenderer>().color = new Color(238f / 255f, 50f / 255f, 123f / 255f);
         }
         pion = p;
+        pion.xpos = x;
+        pion.ypos = y;
     }
 
     public void DestroyPion()
@@ -39,10 +41,15 @@ public class Spots : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if(currpionobj != null && pion.isP1)
+        if (currpionobj != null && pion.isP1)
         {
             board.GetComponent<Board>().choosepion(x, y);
-        }else if (currpionobj == null)
+        }
+        else if (currpionobj != null && !pion.isP1)
+        {
+            board.GetComponent<Board>().eatpion(x, y);
+        }
+        else if (currpionobj == null)
         {
             board.GetComponent<Board>().pickspot(this);
         }
@@ -51,7 +58,7 @@ public class Spots : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
 }

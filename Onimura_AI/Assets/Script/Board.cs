@@ -8,7 +8,7 @@ public class Board : MonoBehaviour
     public GameObject[] kartoes;
     bool isAIturn;
     Spots[,] objarr; //x,y
-    Pions[,] allpion; //0 = player, 1 = ai
+    Pions[,] allpion; //0 = ai, 1 = player (kebalik krn papane kebalik)
     Color green = new Color(98f / 255f, 188f / 255f, 40f / 255f);
     Color grey = new Color(176f / 255f, 176f / 255f, 176f / 255f);
 
@@ -45,16 +45,16 @@ public class Board : MonoBehaviour
             if (i != 2)
             {
                 allpion[0, i] = new Pions(false,false,i,0);
-                objarr[allpion[0, i].xpos, allpion[0, i].ypos].setpion(allpion[0, i]);
                 allpion[1, i] = new Pions(false, true, i, 4);
-                objarr[allpion[1, i].xpos, allpion[1, i].ypos].setpion(allpion[1, i]);
+                objarr[allpion[0, i].xpos, allpion[0, i].ypos].setpion(ref allpion[0, i]);
+                objarr[allpion[1, i].xpos, allpion[1, i].ypos].setpion(ref allpion[1, i]);
             }
             else
             {
                 allpion[0, i] = new Pions(true, false, i, 0);
-                objarr[allpion[0, i].xpos, allpion[0, i].ypos].setpion(allpion[0, i]);
                 allpion[1, i] = new Pions(true, true, i, 4);
-                objarr[allpion[1, i].xpos, allpion[1, i].ypos].setpion(allpion[1, i]);
+                objarr[allpion[0, i].xpos, allpion[0, i].ypos].setpion(ref allpion[0, i]);
+                objarr[allpion[1, i].xpos, allpion[1, i].ypos].setpion(ref allpion[1, i]);
             }
         }
 
@@ -123,8 +123,17 @@ public class Board : MonoBehaviour
     {
         if (s.GetComponent<SpriteRenderer>().color == green)
         {
+            int index = -1;
+            for (int i = 0; i < 5; i++)
+            {
+                if (chosenpapan.pion.xpos == allpion[1, i].xpos && chosenpapan.pion.ypos == allpion[1, i].ypos)
+                {
+                    index = i;
+                    break;
+                }
+            }
             //pindah
-            s.setpion(chosenpapan.pion);
+            s.setpion(ref allpion[1,index]);
             chosenpapan.DestroyPion();
             //muter kartu
             GameObject tempcard = kartoes[indexkartu];
@@ -147,6 +156,46 @@ public class Board : MonoBehaviour
             chosenpapan.GetComponent<SpriteRenderer>().color = grey;
         }
         chosenpapan = objarr[x, y];
+        Debug.Log("dipilih papan di " + x + "," + y);
+        cekmoveavailable();
+    }
+
+    public void eatpion(int x, int y)
+    {
+        if (chosenpapan != null)
+        {
+            chosenpapan.GetComponent<SpriteRenderer>().color = grey;
+            int index = -1;
+            //cari pion player
+            for (int i = 0; i < 5; i++)
+            {
+                if (chosenpapan.pion.xpos == allpion[1, i].xpos && chosenpapan.pion.ypos == allpion[1, i].ypos)
+                {
+                    index = i;
+                    break;
+                }
+            }
+            for (int i = 0; i < 5; i++)
+            {
+                if(allpion[0,i]!=null && allpion[0,i].xpos == x && allpion[0, i].ypos == y)
+                {
+                    allpion[0, i] = null;
+                    objarr[x, y].DestroyPion();
+                    objarr[x, y].GetComponent<Spots>().setpion(ref allpion[1, index]);
+                }
+            }
+        }
+        chosenpapan.DestroyPion();
+        //muter kartu
+        GameObject tempcard = kartoes[indexkartu];
+        kartoes[indexkartu] = kartoes[4]; // kartu rotation
+        kartoes[4] = tempcard;
+        setkartupos();
+        //ngebersihin
+        chosenpapan = null;
+        chosencard = null;
+        //bersihin bg
+        refreshpapan();
         Debug.Log("dipilih papan di " + x + "," + y);
         cekmoveavailable();
     }
