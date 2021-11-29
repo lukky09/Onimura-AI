@@ -162,7 +162,7 @@ public class Board : MonoBehaviour
 
     public void eatpion(int x, int y)
     {
-        if (chosenpapan != null)
+        if (chosenpapan != null && objarr[x,y].GetComponent<SpriteRenderer>().color == green)
         {
             chosenpapan.GetComponent<SpriteRenderer>().color = grey;
             int index = -1;
@@ -184,20 +184,20 @@ public class Board : MonoBehaviour
                     objarr[x, y].GetComponent<Spots>().setpion(ref allpion[1, index]);
                 }
             }
+            chosenpapan.DestroyPion();
+            //muter kartu
+            GameObject tempcard = kartoes[indexkartu];
+            kartoes[indexkartu] = kartoes[4]; // kartu rotation
+            kartoes[4] = tempcard;
+            setkartupos();
+            //ngebersihin
+            chosenpapan = null;
+            chosencard = null;
+            //bersihin bg
+            refreshpapan();
+            Debug.Log("dipilih papan di " + x + "," + y);
+            cekmoveavailable();
         }
-        chosenpapan.DestroyPion();
-        //muter kartu
-        GameObject tempcard = kartoes[indexkartu];
-        kartoes[indexkartu] = kartoes[4]; // kartu rotation
-        kartoes[4] = tempcard;
-        setkartupos();
-        //ngebersihin
-        chosenpapan = null;
-        chosencard = null;
-        //bersihin bg
-        refreshpapan();
-        Debug.Log("dipilih papan di " + x + "," + y);
-        cekmoveavailable();
     }
 
     void cekmoveavailable()
