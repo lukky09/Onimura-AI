@@ -9,9 +9,12 @@ public class Board : MonoBehaviour
     bool isAIturn;
     Spots[,] objarr; //x,y
     Pions[,] allpion; //0 = player, 1 = ai
+    Color green = new Color(98f / 255f, 188f / 255f, 40f / 255f);
+    Color grey = new Color(176f / 255f, 176f / 255f, 176f / 255f);
 
     Spots chosenpapan;
     Card chosencard;
+    int indexkartu;
 
     // Start is called before the first frame update
     void Start()
@@ -57,14 +60,18 @@ public class Board : MonoBehaviour
 
     }
 
-   void refreshpion()
+   void refreshpapan()
     {
         for (int i = 0; i < 5; i++)
         {
             for (int j = 0; j < 5; j++)
             {
-                objarr[j, i].GetComponent<SpriteRenderer>().color = Color.gray;
+                objarr[j, i].GetComponent<SpriteRenderer>().color = grey;
             }
+        }
+        if (chosenpapan != null)
+        {
+            chosenpapan.GetComponent<SpriteRenderer>().color = green;
         }
     }
 
@@ -97,30 +104,71 @@ public class Board : MonoBehaviour
 
     public void changekartu(Card c)
     {
-        int i = -1;
         for (int j = 0; j < 5; j++)
         {
             if (kartoes[j].GetComponent<Card>() == c && j < 2)
             {
-                i = j;
+                setkartupos();
+                indexkartu = j;
                 chosencard = c;
-                Debug.Log("Pilih kartu ke-" + (i+1));
+                chosencard.transform.position = new Vector2(chosencard.transform.position.x, chosencard.transform.position.y + 1);
+                Debug.Log("Pilih kartu ke-" + (indexkartu+1));
                 break;
             }
         }
-        if (i >= 0)
+        cekmoveavailable();
+    }
+
+    public void pickspot(Spots s)
+    {
+        if (s.GetComponent<SpriteRenderer>().color == green)
         {
-            GameObject tempcard = kartoes[i];
-            kartoes[i] = kartoes[4]; // kartu rotation
+            //pindah
+            s.setpion(chosenpapan.pion);
+            chosenpapan.DestroyPion();
+            //muter kartu
+            GameObject tempcard = kartoes[indexkartu];
+            kartoes[indexkartu] = kartoes[4]; // kartu rotation
             kartoes[4] = tempcard;
             setkartupos();
+            //ngebersihin
+            chosenpapan = null;
+            chosencard = null;
+            //bersihin bg
+            refreshpapan();
         }
+
     }
 
     public void choosepion(int x, int y)
     {
+        if (chosenpapan != null)
+        {
+            chosenpapan.GetComponent<SpriteRenderer>().color = grey;
+        }
         chosenpapan = objarr[x, y];
         Debug.Log("dipilih papan di " + x + "," + y);
+        cekmoveavailable();
+    }
+
+    void cekmoveavailable()
+    {
+        refreshpapan();
+        if (chosencard != null && chosenpapan != null)
+        {
+            int x = chosenpapan.GetComponent<Spots>().x;
+            int y = chosenpapan.GetComponent<Spots>().y;
+            int xtemp, ytemp;
+            foreach (int[] arr in chosencard.gerakans)
+            {
+                xtemp = arr[0] + x;
+                ytemp =  y - arr[1] ; ///krn + nti tambah ke bawah
+                if (xtemp >= 0 && xtemp < 5 && ytemp >= 0 && ytemp < 5)
+                {
+                    objarr[xtemp, ytemp].GetComponent<SpriteRenderer>().color = green;
+                }
+            }
+        }
     }
 
     void setkartupos()
@@ -130,11 +178,6 @@ public class Board : MonoBehaviour
         kartoes[2].transform.position = new Vector2(-4.5f, 2f);
         kartoes[3].transform.position = new Vector2(4.5f, 2f);
         kartoes[4].transform.position = new Vector2(6.5f, 0);
-    }
-
-    public void henshin(int x,int y)
-    {
-        objarr[x, y].GetComponent<SpriteRenderer>().color = Color.green;
     }
 
 }

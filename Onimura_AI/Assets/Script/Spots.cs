@@ -5,34 +5,46 @@ using UnityEngine;
 public class Spots : MonoBehaviour
 {
     public int x, y;
-    public GameObject currpion = null;
+    public GameObject currpionobj = null;
+    public Pions pion = null;
     public GameObject board;
 
     public void setpion(Pions p)
     {
         if (p.isKing)
         {
-            currpion = Instantiate(Resources.Load<GameObject>("Master"), transform);
+            currpionobj = Instantiate(Resources.Load<GameObject>("Master"), transform);
         }
         else
         {
-            currpion = Instantiate(Resources.Load<GameObject>("murid"), transform);
+            currpionobj = Instantiate(Resources.Load<GameObject>("murid"), transform);
         }
         if (p.isP1)
         {
-            currpion.GetComponent<SpriteRenderer>().color = new Color(50f / 255f, 123f / 255f, 238f / 255f);
+            currpionobj.GetComponent<SpriteRenderer>().color = new Color(50f / 255f, 123f / 255f, 238f / 255f);
         }
         else
         {
-            currpion.GetComponent<SpriteRenderer>().color = new Color(238f / 255f, 50f / 255f, 123f / 255f);
+            currpionobj.GetComponent<SpriteRenderer>().color = new Color(238f / 255f, 50f / 255f, 123f / 255f);
         }
+        pion = p;
+    }
+
+    public void DestroyPion()
+    {
+        Destroy(currpionobj);
+        currpionobj = null;
+        pion = null;
     }
 
     private void OnMouseDown()
     {
-        if(currpion!= null)
+        if(currpionobj != null && pion.isP1)
         {
             board.GetComponent<Board>().choosepion(x, y);
+        }else if (currpionobj == null)
+        {
+            board.GetComponent<Board>().pickspot(this);
         }
     }
 
