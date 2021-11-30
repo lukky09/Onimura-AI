@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Pions
+public class Pions 
 {
     public bool isP1,isKing;
     public int xpos, ypos;

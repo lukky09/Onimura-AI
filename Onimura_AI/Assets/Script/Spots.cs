@@ -40,7 +40,7 @@ public class Spots : MonoBehaviour
     }
 
     private void OnMouseDown()
-    {
+    { 
         if (currpionobj != null && pion.isP1)
         {
             board.GetComponent<Board>().choosepion(x, y);

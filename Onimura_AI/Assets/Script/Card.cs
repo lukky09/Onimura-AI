@@ -7,6 +7,7 @@ public class Card : MonoBehaviour
     public GameObject papan;
     public ArrayList gerakans = new ArrayList();
     Sprite dissprite;
+    public string nama;
 
     private void Start()
     {
@@ -119,13 +120,13 @@ public class Card : MonoBehaviour
                 gerakans.Add(new int[] { 0, 2 });
                 break;
         }
+        nama = name;
         dissprite = Resources.Load<Sprite>(name);
         this.GetComponent<SpriteRenderer>().sprite = dissprite;
     }
 
     private void OnMouseDown()
     {
-        Debug.Log("Keklik");
         papan.GetComponent<Board>().changekartu(this);
     }
 
