@@ -38,7 +38,6 @@ public class Board : MonoBehaviour
         {
             tempx = i % 5;
             tempy = i / 5;
-            gameObject.transform.GetChild(i).gameObject.AddComponent<Spots>();
             objarr[tempx, tempy] = gameObject.transform.GetChild(i).GetComponent<Spots>();
             objarr[tempx, tempy].board = gameObject;
             objarr[tempx, tempy].x = tempx;

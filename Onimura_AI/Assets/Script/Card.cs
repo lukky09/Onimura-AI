@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Card : MonoBehaviour
 {
+    public Sprite[] gambars;
     public GameObject papan;
     public ArrayList gerakans = new ArrayList();
     Sprite dissprite;
@@ -121,7 +122,7 @@ public class Card : MonoBehaviour
                 break;
         }
         nama = name;
-        dissprite = Resources.Load<Sprite>(name);
+        dissprite = gambars[i];
         this.GetComponent<SpriteRenderer>().sprite = dissprite;
     }
 

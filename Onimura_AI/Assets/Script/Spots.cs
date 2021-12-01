@@ -8,16 +8,17 @@ public class Spots : MonoBehaviour
     public GameObject currpionobj = null;
     public Pions pion = null;
     public GameObject board;
+    public GameObject[] murid;
 
     public void setpion(ref Pions p)
     {
         if (p.isKing)
         {
-            currpionobj = Instantiate(Resources.Load<GameObject>("Master"), transform);
+            currpionobj = Instantiate(murid[1], transform);
         }
         else
         {
-            currpionobj = Instantiate(Resources.Load<GameObject>("murid"), transform);
+            currpionobj = Instantiate(murid[0], transform);
         }
         if (p.isP1)
         {

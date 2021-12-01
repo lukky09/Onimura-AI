@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 359179137662004574}
   - component: {fileID: 5990723666836649695}
   - component: {fileID: 8140975271526874766}
+  - component: {fileID: 156345829744230300}
   m_Layer: 0
   m_Name: Kartu
   m_TagString: Untagged
@@ -109,3 +110,34 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.22, y: 2.04}
   m_EdgeRadius: 0
+--- !u!114 &156345829744230300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4392147736001994772}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d95ec7df7d2ed54caa5cce9443a5423, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gambars:
+  - {fileID: 21300000, guid: 82f1a34d95baa7348a10723c2fe21753, type: 3}
+  - {fileID: 21300000, guid: bf2b10e936d8b5641b81116b9d4cadb0, type: 3}
+  - {fileID: 21300000, guid: 6f7dcfb438db1e146b8e5aad98198368, type: 3}
+  - {fileID: 21300000, guid: 33ab8e05233bbae47b534d1b1c3f7616, type: 3}
+  - {fileID: 21300000, guid: a5abb45b133f0944b925cf7b6950137e, type: 3}
+  - {fileID: 21300000, guid: 9403cef41c61b044ba9de76991ecbf49, type: 3}
+  - {fileID: 21300000, guid: a4f4693aae5ae704497b9a2ddd01eb11, type: 3}
+  - {fileID: 21300000, guid: 3ad920baec9738047b149b560e4ad50e, type: 3}
+  - {fileID: 21300000, guid: 6c17ade935534bb4c8b5f7675c22c00c, type: 3}
+  - {fileID: 21300000, guid: 7f2df933412e0dd4c8d67f311624c9a9, type: 3}
+  - {fileID: 21300000, guid: cd69dfaed9d53a74e94cc79fa54c94f3, type: 3}
+  - {fileID: 21300000, guid: 006b03336717db74c8eb9bc8fd84c561, type: 3}
+  - {fileID: 21300000, guid: 7b45765cbb220fc4cb6aa795eeb7fb59, type: 3}
+  - {fileID: 21300000, guid: 4ca96b792b3f92e46b82d645c0732031, type: 3}
+  - {fileID: 21300000, guid: 795901bd7747a594c8fd8e3b575c8fbf, type: 3}
+  - {fileID: 21300000, guid: b91c88cfeea5f084eb73fb3d0b775deb, type: 3}
+  papan: {fileID: 0}
+  nama: 

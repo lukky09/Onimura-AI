@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7417356118478460680}
   - component: {fileID: 3507386238993962188}
   - component: {fileID: 8897359806389879815}
+  - component: {fileID: 5014145611335975441}
   m_Layer: 0
   m_Name: BoardPos
   m_TagString: Untagged
@@ -109,3 +110,22 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.984375, y: 0.984375}
   m_EdgeRadius: 0
+--- !u!114 &5014145611335975441
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7617110919781972376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 132ec08dc350aa74c82c44f37eb24197, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  x: 0
+  y: 0
+  currpionobj: {fileID: 0}
+  board: {fileID: 0}
+  murid:
+  - {fileID: 1065405005238231909, guid: 1e26fec54111b59489165ac2b9df3347, type: 3}
+  - {fileID: 4801585202714193177, guid: 660d578a19570ba42814aab9d548d854, type: 3}
