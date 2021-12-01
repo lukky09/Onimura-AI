@@ -34,7 +34,10 @@ public class Spots : MonoBehaviour
 
     public void DestroyPion()
     {
-        Destroy(currpionobj);
+        if (currpionobj != null)
+        {
+            Destroy(currpionobj);
+        }
         currpionobj = null;
         pion = null;
     }

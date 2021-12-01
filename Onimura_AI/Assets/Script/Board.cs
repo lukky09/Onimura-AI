@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Board : MonoBehaviour
 {
 
     public GameObject[] kartoes;
-    bool isAIturn = false;
+    public GameObject textobj;
+    bool isFrozen = false;
     Spots[,] objarr; //x,y
     Pions[,] allpion; //0 = ai, 1 = player (kebalik krn papane kebalik)
     Color green = new Color(98f / 255f, 188f / 255f, 40f / 255f);
@@ -22,7 +24,9 @@ public class Board : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        isAIturn = false;
+        textobj.GetComponent<Text>().color = new Color(98f / 255f, 188f / 255f, 40f / 255f, 0f / 255f);
+
+        isFrozen = false;
         chosenpapan = null;
         chosencard = null;
 
@@ -70,7 +74,13 @@ public class Board : MonoBehaviour
             for (int j = 0; j < 5; j++)
             {
                 objarr[j, i].GetComponent<SpriteRenderer>().color = grey;
+                objarr[j, i].GetComponent<Spots>().DestroyPion();
             }
+        }
+        for (int i = 0; i < 5; i++)
+        {
+            if (allpion[0, i] != null) objarr[allpion[0, i].xpos, allpion[0, i].ypos].GetComponent<Spots>().setpion(ref allpion[0, i]);
+            if (allpion[1, i] != null) objarr[allpion[1, i].xpos, allpion[1, i].ypos].GetComponent<Spots>().setpion(ref allpion[1, i]);
         }
         if (chosenpapan != null)
         {
@@ -107,7 +117,7 @@ public class Board : MonoBehaviour
 
     public void changekartu(Card c)
     {
-        if (!isAIturn)
+        if (!isFrozen)
         {
             for (int j = 0; j < 5; j++)
             {
@@ -124,13 +134,30 @@ public class Board : MonoBehaviour
         }
     }
 
+    void cekwin()
+    {
+        //AI win
+        if (allpion[0, 2] != null && (allpion[1, 2] == null || (allpion[0, 2].xpos == 2 && allpion[0, 2].ypos == 4)))
+        {
+            textobj.GetComponent<Text>().color = Color.black;
+            textobj.GetComponent<Text>().text = "AI Win";
+            isFrozen = true;
+        }//player win
+        else if (allpion[1, 2] != null && (allpion[0, 2] == null || (allpion[1, 2].xpos == 2 && allpion[1, 2].ypos == 0)))
+        {
+            textobj.GetComponent<Text>().color = Color.black;
+            textobj.GetComponent<Text>().text = "Player Win";
+            isFrozen = true;
+        }
+    }
+
     public void pickspot(Spots s)
     {
-        if (!isAIturn && s.GetComponent<SpriteRenderer>().color == green)
+        if (!isFrozen && s.GetComponent<SpriteRenderer>().color == green)
         {
             for (int i = 0; i < 5; i++)
             {
-                if (chosenpapan.pion.xpos == allpion[1, i].xpos && chosenpapan.pion.ypos == allpion[1, i].ypos)
+                if (allpion[1, i]!=null && chosenpapan.pion.xpos == allpion[1, i].xpos && chosenpapan.pion.ypos == allpion[1, i].ypos)
                 {
                     s.setpion(ref allpion[1, i]);
                     break;
@@ -141,6 +168,7 @@ public class Board : MonoBehaviour
             kartoes = rotatecard(kartoes, indexkartu);
             setkartupos();
             newturn();
+            cekwin();
         }
 
     }
@@ -167,15 +195,18 @@ public class Board : MonoBehaviour
             if (allpion[0, i] != null) peepee[0, i] = new Pions(allpion[0, i].isKing, allpion[0, i].isP1, allpion[0, i].xpos, allpion[0, i].ypos);
             if (allpion[1, i] != null) peepee[1, i] = new Pions(allpion[1, i].isKing, allpion[1, i].isP1, allpion[1, i].xpos, allpion[1, i].ypos);
         }
-        isAIturn = true;
+        isFrozen = true;
         Debug.Log(minimaxmovement((GameObject[])kartoes.Clone(), (Pions[,])peepee.Clone(), 3, -100, 100, true));
         Debug.Log("Gerakan terbaik adalah pion " + enemypion + " dengan arah " + enemymove[0] + "x dan " + enemymove[1] + "y dengan kartu " + kartoes[enemycard].GetComponent<Card>().nama);
         //hancurkan pion secara kode
         for (int i = 0; i < 5; i++)
         {
-            if (allpion[0, enemypion].xpos == allpion[1, i].xpos && allpion[0, enemypion].ypos == allpion[1, i].ypos)
+            if (allpion[1, i]!=null && allpion[0, enemypion].xpos - enemymove[0] == allpion[1, i].xpos && allpion[0, enemypion].ypos + enemymove[1] == allpion[1, i].ypos)
             {
+                //hapus pion secara visual
+                objarr[allpion[1, i].xpos, allpion[1, i].ypos].DestroyPion(); 
                 allpion[1, i] = null;
+                break;
             }
         }
         objarr[allpion[0, enemypion].xpos, allpion[0, enemypion].ypos].GetComponent<Spots>().DestroyPion();
@@ -184,12 +215,13 @@ public class Board : MonoBehaviour
         objarr[allpion[0, enemypion].xpos, allpion[0, enemypion].ypos].setpion(ref allpion[0, enemypion]);
         kartoes = rotatecard(kartoes, enemycard);
         setkartupos();
-        isAIturn = false;
+        isFrozen = false;
+        cekwin();
     }
 
     public void choosepion(int x, int y)
     {
-        if (!isAIturn)
+        if (!isFrozen)
         {
             if (chosenpapan != null)
             {
@@ -202,7 +234,7 @@ public class Board : MonoBehaviour
 
     public void eatpion(int x, int y)
     {
-        if (chosenpapan != null && objarr[x, y].GetComponent<SpriteRenderer>().color == green && !isAIturn)
+        if (chosenpapan != null && objarr[x, y].GetComponent<SpriteRenderer>().color == green && !isFrozen)
         {
             chosenpapan.GetComponent<SpriteRenderer>().color = grey;
             int index = -1;
@@ -230,7 +262,8 @@ public class Board : MonoBehaviour
             setkartupos();
             newturn();
             Debug.Log("dipilih papan di " + x + "," + y);
-            cekmoveavailable();
+            refreshpapan();
+            cekwin();
         }
     }
 
@@ -279,7 +312,7 @@ public class Board : MonoBehaviour
                 if (semuapion[0, i] != null) jum++;
                 if (semuapion[1, i] != null) jum--;
             }
-            jum = Mathf.Pow(jum, 2);
+            jum = Mathf.Pow(jum * 10, 2);
             if (semuapion[0, 2] != null && semuapion[1, 2] != null)
             {
                 //Debug.Log(Mathf.Sqrt(Mathf.Pow(semuapion[0, 2].xpos - 2, 2) + Mathf.Pow(semuapion[0, 2].ypos - 4, 2))+" "+ Mathf.Sqrt(Mathf.Pow(semuapion[1, 2].xpos - 2, 2) + Mathf.Pow(semuapion[1, 2].ypos - 0, 2)));
