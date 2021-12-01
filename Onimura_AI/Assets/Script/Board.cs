@@ -196,7 +196,7 @@ public class Board : MonoBehaviour
             if (allpion[1, i] != null) peepee[1, i] = new Pions(allpion[1, i].isKing, allpion[1, i].isP1, allpion[1, i].xpos, allpion[1, i].ypos);
         }
         isFrozen = true;
-        Debug.Log(minimaxmovement((GameObject[])kartoes.Clone(), (Pions[,])peepee.Clone(), 3, -100, 100, true));
+        Debug.Log(minimaxmovement((GameObject[])kartoes.Clone(), (Pions[,])peepee.Clone(), 3, -10000, 10000,true));
         Debug.Log("Gerakan terbaik adalah pion " + enemypion + " dengan arah " + enemymove[0] + "x dan " + enemymove[1] + "y dengan kartu " + kartoes[enemycard].GetComponent<Card>().nama);
         //hancurkan pion secara kode
         for (int i = 0; i < 5; i++)
@@ -241,7 +241,7 @@ public class Board : MonoBehaviour
             //cari pion player
             for (int i = 0; i < 5; i++)
             {
-                if (chosenpapan.pion.xpos == allpion[1, i].xpos && chosenpapan.pion.ypos == allpion[1, i].ypos)
+                if (allpion[1, i]!=null && chosenpapan.pion.xpos == allpion[1, i].xpos && chosenpapan.pion.ypos == allpion[1, i].ypos)
                 {
                     index = i;
                     break;
@@ -316,13 +316,14 @@ public class Board : MonoBehaviour
             if (semuapion[0, 2] != null && semuapion[1, 2] != null)
             {
                 //Debug.Log(Mathf.Sqrt(Mathf.Pow(semuapion[0, 2].xpos - 2, 2) + Mathf.Pow(semuapion[0, 2].ypos - 4, 2))+" "+ Mathf.Sqrt(Mathf.Pow(semuapion[1, 2].xpos - 2, 2) + Mathf.Pow(semuapion[1, 2].ypos - 0, 2)));
-                jarak = Mathf.Sqrt(Mathf.Pow(semuapion[0, 2].xpos - 2, 2) + Mathf.Pow(semuapion[0, 2].ypos - 4, 2));//ai
-                jarak -= Mathf.Sqrt(Mathf.Pow(semuapion[1, 2].xpos - 2, 2) + Mathf.Pow(semuapion[1, 2].ypos - 0, 2)); //player
+                jarak -= Mathf.Sqrt(Mathf.Pow(semuapion[0, 2].xpos - 2, 2) + Mathf.Pow(semuapion[0, 2].ypos - 4, 2));//ai
+                jarak += Mathf.Sqrt(Mathf.Pow(semuapion[1, 2].xpos - 2, 2) + Mathf.Pow(semuapion[1, 2].ypos - 0, 2)); //player
+                jarak *= 20;
             }
             else
             {
-                if (semuapion[1, 2] == null) jarak += 100;
-                if (semuapion[0, 2] == null) jarak -= 100;
+                if (semuapion[1, 2] == null) jarak += 10000;
+                if (semuapion[0, 2] == null) jarak -= 10000;
             }
             return jum + jarak;
         }
@@ -330,7 +331,7 @@ public class Board : MonoBehaviour
         //gerakan AI
         if (maxingaiTurn)
         {
-            float eval, maxeval = -1000;
+            float eval, maxeval = -100;
             bool prune = false;
             //untuk 5 pionnya
             for (int j = 0; j < 5; j++)
@@ -338,14 +339,14 @@ public class Board : MonoBehaviour
                 //kalau pion msh hidup
                 if (semuapion[0, j] != null)
                 {
+                    Debug.Log("pion ke- = " + j);
                     Pions pion = semuapion[0, j];
                     //untuk semua gerakan di kartu pertama AI
                     for (int i = 2; i < 4; i++)
                     {
-                        //Debug.Log("kartu ke - "+i);
+                        Debug.Log("kartu ke- = " + i+" ("+ kartus[i].GetComponent<Card>().nama + ")");
                         foreach (int[] gerakan in kartus[i].GetComponent<Card>().gerakans)
                         {
-                            //Debug.Log("gerakan x = " + gerakan[0]+ " y = " + gerakan[1]);
                             bool collide = false;
                             //cek collide ma temen
                             for (int e = 0; e < 5; e++)
@@ -356,8 +357,10 @@ public class Board : MonoBehaviour
                                     break;
                                 }
                             }
+                            //bisa jalan beneran
                             if (pion.xpos - gerakan[0] >= 0 && pion.xpos - gerakan[0] < 5 && pion.ypos + gerakan[1] >= 0 && pion.ypos + gerakan[1] < 5 && !collide)
                             {
+                                Debug.Log("gerakan x = " + gerakan[0] + " y = " + gerakan[1]);
                                 //setup papan
                                 Pions[,] newsemuapion = new Pions[2, 5];
                                 for (int c = 0; c < 5; c++)
@@ -365,10 +368,10 @@ public class Board : MonoBehaviour
                                     if (semuapion[0, c] != null) newsemuapion[0, c] = new Pions(semuapion[0, c].isKing, semuapion[0, c].isP1, semuapion[0, c].xpos, semuapion[0, c].ypos);
                                     if (semuapion[1, c] != null) newsemuapion[1, c] = new Pions(semuapion[1, c].isKing, semuapion[1, c].isP1, semuapion[1, c].xpos, semuapion[1, c].ypos);
                                 }
-                                //Debug.Log("Sebelum gerak : " + newsemuapion[0, j].xpos + "," + newsemuapion[0, j].ypos);
+                                Debug.Log("Sebelum gerak : " + newsemuapion[0, j].xpos + "," + newsemuapion[0, j].ypos);
                                 newsemuapion[0, j].xpos = pion.xpos - gerakan[0];
                                 newsemuapion[0, j].ypos = pion.ypos + gerakan[1];
-                                //Debug.Log("Hasil gerak : "+ newsemuapion[0, j].xpos+","+ newsemuapion[0, j].ypos);
+                                Debug.Log("Hasil gerak : "+ newsemuapion[0, j].xpos+","+ newsemuapion[0, j].ypos);
                                 //cek klo pion musuh kebunuh
                                 for (int k = 0; k < 5; k++)
                                 {
@@ -378,7 +381,12 @@ public class Board : MonoBehaviour
                                         break;
                                     }
                                 }
-                                eval = minimaxmovement(rotatecard(kartus, i), newsemuapion, dalam - 1, a, b, false);
+                                GameObject[] setkartubaru = new GameObject[5];
+                                for (int c = 0; c < 5; c++)
+                                {
+                                    setkartubaru[c] = kartus[c];
+                                }
+                                eval = minimaxmovement(rotatecard(setkartubaru, i), newsemuapion, dalam - 1, a, b, false);
                                 maxeval = Mathf.Max(eval, maxeval);
                                 if (eval >= a)
                                 {
@@ -387,10 +395,10 @@ public class Board : MonoBehaviour
                                     enemypion = j;
                                 }
                                 a = Mathf.Max(eval, a);
-                                //Debug.Log("Menggerakkan Pion AI ke - " + j + " dengan arah " + gerakan[0]*-1 + "x dan " + gerakan[1] + "y dengan kartu " + kartus[i].GetComponent<Card>().nama + " di depth " + dalam + " (a = " + a + ",b = " + b + ")");
+                                Debug.Log("Menggerakkan Pion AI ke - " + j + " dengan arah " + gerakan[0]*-1 + "x dan " + gerakan[1] + "y dengan kartu " + kartus[i].GetComponent<Card>().nama + " di depth " + dalam + " (a = " + a + ",b = " + b + ")");
                                 if (b <= a)
                                 {
-                                    //Debug.Log("Ke prune?");
+                                    Debug.Log("Ke prune?");
                                     prune = true;
                                     break;
                                 }
@@ -398,7 +406,7 @@ public class Board : MonoBehaviour
                         }
                         if (prune)
                         {
-                            //Debug.Log("Ke prunes");
+                            Debug.Log("Ke prunes");
                             break;
                         }
                     }
@@ -409,22 +417,22 @@ public class Board : MonoBehaviour
         }
         else //gerakan Player
         {
-            float eval, mineval = 1000;
+            float eval, mineval = 100;
             bool prune = false;
             //untuk 5 pionnya
             for (int j = 0; j < 5; j++)
             {
-                //kalau pion msh hidup
+                //kalau pion player msh hidup
                 if (semuapion[1, j] != null)
                 {
+                    Debug.Log("pion player ke- = " + j);
                     Pions pion = semuapion[1, j];
                     //untuk semua gerakan di kartu pertama AI
                     for (int i = 0; i < 2; i++)
                     {
-                        //Debug.Log("kartu ke - "+i);
+                        Debug.Log("kartu ke- = " + i + " (" + kartus[i].GetComponent<Card>().nama + ")");
                         foreach (int[] gerakan in kartus[i].GetComponent<Card>().gerakans)
                         {
-                            //Debug.Log("gerakan x = " + gerakan[0]+ " y = " + gerakan[1]);
                             bool collide = false;
                             //cek collide ma temen
                             for (int e = 0; e < 5; e++)
@@ -435,8 +443,10 @@ public class Board : MonoBehaviour
                                     break;
                                 }
                             }
+                            //bisa jalan beneran
                             if (pion.xpos + gerakan[0] >= 0 && pion.xpos + gerakan[0] < 5 && pion.ypos - gerakan[1] >= 0 && pion.ypos - gerakan[1] < 5 && !collide)
                             {
+                                Debug.Log("gerakan x = " + gerakan[0] + " y = " + gerakan[1]);
                                 //setup papan
                                 Pions[,] newsemuapion = new Pions[2, 5];
                                 for (int c = 0; c < 5; c++)
@@ -444,10 +454,10 @@ public class Board : MonoBehaviour
                                     if (semuapion[0, c] != null) newsemuapion[0, c] = new Pions(semuapion[0, c].isKing, semuapion[0, c].isP1, semuapion[0, c].xpos, semuapion[0, c].ypos);
                                     if (semuapion[1, c] != null) newsemuapion[1, c] = new Pions(semuapion[1, c].isKing, semuapion[1, c].isP1, semuapion[1, c].xpos, semuapion[1, c].ypos);
                                 }
-                                //Debug.Log("Sebelum gerak player : " + newsemuapion[1, j].xpos + "," + newsemuapion[1, j].ypos);
+                                Debug.Log("Sebelum gerak : " + newsemuapion[1, j].xpos + "," + newsemuapion[1, j].ypos);
                                 newsemuapion[1, j].xpos = pion.xpos + gerakan[0];
                                 newsemuapion[1, j].ypos = pion.ypos - gerakan[1];
-                                //Debug.Log("Hasil gerak player : " + newsemuapion[1, j].xpos + "," + newsemuapion[1, j].ypos);
+                                Debug.Log("Hasil gerak player : " + newsemuapion[1, j].xpos + "," + newsemuapion[1, j].ypos);
                                 //cek klo pion AI kebunuh
                                 for (int k = 0; k < 5; k++)
                                 {
@@ -457,13 +467,18 @@ public class Board : MonoBehaviour
                                         break;
                                     }
                                 }
-                                eval = minimaxmovement(rotatecard(kartus, i), newsemuapion, dalam - 1, a, b, true);
+                                GameObject[] setkartubaru = new GameObject[5];
+                                for (int c = 0; c < 5; c++)
+                                {
+                                    setkartubaru[c] = kartus[c];
+                                }
+                                eval = minimaxmovement(rotatecard(setkartubaru, i), newsemuapion, dalam - 1, a, b, false);
                                 mineval = Mathf.Min(eval, mineval);
                                 b = Mathf.Min(eval, b);
                                 //Debug.Log("Menggerakkan Pion Player ke - " + j + " dengan arah " + gerakan[0] * -1 + "x dan " + gerakan[1] + "y dengan kartu " + kartus[i].GetComponent<Card>().nama + " di depth " + dalam + " (a = " + a + ",b = " + b + ")");
                                 if (b <= a)
                                 {
-                                    //Debug.Log("Ke prune player?");
+                                    Debug.Log("Ke prune player?");
                                     prune = true;
                                     break;
                                 }
@@ -471,7 +486,7 @@ public class Board : MonoBehaviour
                         }
                         if (prune)
                         {
-                            //Debug.Log("Ke prunes player");
+                            //Debug.Log("Ke prunes");
                             break;
                         }
                     }
